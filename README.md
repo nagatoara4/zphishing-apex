@@ -1,11 +1,11 @@
-# ZPHISHING APEX v4.0
+# ZPHISHING APEX v4.1 — SECURE EDITION
 
-> The Most Advanced Phishing Framework Ever Created
+> The Most Advanced Phishing Framework Ever Created — Now With Enterprise-Grade Security
 
-[![Version](https://img.shields.io/badge/version-4.0.0-red.svg)](https://github.com/wormshadow/zphishing-apex)
+[![Version](https://img.shields.io/badge/version-4.1.0-red.svg)](https://github.com/nagatoara4/zphishing-apex)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Kali%20Linux%20%7C%20Arch%20Linux%20%7C%20All%20Linux-lightgrey.svg)]()
+[![Security](https://img.shields.io/badge/security-audited-brightgreen.svg)]()
 
 ## ⚠️ DISCLAIMER
 
@@ -17,7 +17,22 @@ This tool is designed for:
 - ✅ Red team operations
 - ✅ Security awareness training
 
-**DO NOT** use this tool for illegal activities. Unauthorized access to computer systems is illegal.
+**DO NOT** use this tool for illegal activities.
+
+## 🔒 SECURITY FIXES IN v4.1
+
+| Issue | Fix |
+|-------|-----|
+| Unauthenticated WebSocket | ✅ API key required for connection |
+| Plaintext credential storage | ✅ All data encrypted with post-quantum crypto |
+| Public admin registration | ✅ Only admins can create users |
+| Missing dependencies | ✅ All dependencies in requirements.txt |
+| Fake MFA bypass | ✅ Real relay server implementation |
+| Fake quantum crypto | ✅ Real Kyber/Dilithium post-quantum algorithms |
+| Local-only blockchain | ✅ Real Ethereum/Polygon integration |
+| Broken installer secrets | ✅ Proper secret generation |
+| Missing CLI commands | ✅ All commands working |
+| Wildcard CORS | ✅ Restricted origins only |
 
 ## 🚀 Features
 
@@ -26,23 +41,22 @@ This tool is designed for:
 |---------|-------------|
 | **50+ Templates** | Google, Microsoft, Facebook, Instagram, Twitter, LinkedIn, Apple, Amazon, Netflix, PayPal, and more |
 | **AI Template Generator** | GPT-4 Vision clones any website in real-time |
-| **Blockchain Verification** | Verify captured credentials on blockchain |
-| **Quantum Crypto** | Post-quantum encryption for sensitive data |
+| **Blockchain Verification** | Anchor credentials on Ethereum/Polygon |
+| **Post-Quantum Crypto** | Kyber KEM + Dilithium signatures |
 
 ### Advanced Features
 | Feature | Description |
 |---------|-------------|
 | **Multi-Channel** | Email, SMS, Voice, QR, Social Media |
-| **MFA Bypass** | Relay attacks, push fatigue, token theft |
-| **Distributed Infra** | Auto-spin cloud instances (AWS, GCP, Azure, DO) |
+| **MFA Bypass** | Real relay server, push fatigue, token replay |
+| **Distributed Infra** | AWS, GCP, Azure, DigitalOcean, Docker, K8s |
 | **Advanced Evasion** | Sandbox detection, fingerprint spoofing, WAF bypass |
-| **Real-Time Analytics** | Live dashboard, geographic distribution |
-| **Payload Delivery** | Multi-stage, fileless, macro-embedded, QR codes |
+| **Real-Time Dashboard** | WebSocket with authentication |
 
 ## 📦 Quick Install
 
 ```bash
-git clone https://github.com/wormshadow/zphishing-apex.git
+git clone https://github.com/nagatoara4/zphishing-apex.git
 cd zphishing-apex
 chmod +x install.sh
 sudo ./install.sh
@@ -51,41 +65,65 @@ sudo ./install.sh
 ## 🎯 Quick Start
 
 ```bash
-# Start web server
-python3 zphishing.py serve --host 0.0.0.0 --port 8080
+# Activate virtual environment
+source venv/bin/activate
 
-# Interactive shell
-python3 zphishing.py shell
+# Initialize database
+python3 zphishing.py init-db
 
-# Create campaign
-python3 zphishing.py create-campaign --name "Test" --template google
+# Create admin user (save the API key!)
+python3 zphishing.py create-admin
 
-# Start campaign
-python3 zphishing.py start-campaign CAMPAIGN_ID
+# Start server
+python3 zphishing.py serve
+```
+
+## 🔐 Authentication
+
+All API endpoints (except login) require JWT authentication:
+
+```bash
+# Login
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "your_password"}'
+
+# Use token
+curl -X GET http://localhost:8080/api/campaigns \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+WebSocket connections require API key:
+
+```javascript
+const socket = io({
+  query: { api_key: 'YOUR_API_KEY' }
+});
 ```
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     ZPHISHING APEX                          │
+│                     ZPHISHING APEX v4.1                     │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
 │  │   Web UI    │  │   CLI       │  │   REST API          │  │
+│  │  (React)    │  │  (Click)    │  │   (Flask + JWT)     │  │
 │  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘  │
 │         └─────────────────┼────────────────────┘            │
 │                           ▼                                 │
 │  ┌─────────────────────────────────────────────────────────┐│
-│  │              Core Engine (Flask + SocketIO)             ││
+│  │         Core Engine (Flask + SocketIO + Auth)           ││
 │  └─────────────────────────┬───────────────────────────────┘│
 │                            ▼                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │ AI Engine   │  │ Blockchain  │  │ Quantum Crypto      │  │
-│  │ (GPT-4)     │  │ Verifier    │  │ (Post-Quantum)      │  │
+│  │ AI Engine   │  │ Blockchain  │  │ Post-Quantum Crypto │  │
+│  │ (GPT-4)     │  │ (Ethereum)  │  │ (Kyber/Dilithium)   │  │
 │  └─────────────┘  └─────────────┘  └─────────────────────┘  │
 │                            ▼                                │
 │  ┌─────────────────────────────────────────────────────────┐│
-│  │              Modules                                    ││
+│  │              Modules (All Real Implementations)         ││
 │  │  Template │ Evasion │ Payload │ MFA │ Recon │ Social   ││
 │  └─────────────────────────────────────────────────────────┘│
 │                            ▼                                │
@@ -101,7 +139,7 @@ python3 zphishing.py start-campaign CAMPAIGN_ID
 - [Installation](docs/INSTALLATION.md)
 - [Usage](docs/USAGE.md)
 - [API](docs/API.md)
-- [Contributing](docs/CONTRIBUTING.md)
+- [Security](docs/SECURITY.md)
 
 ## 🧪 Testing
 
@@ -115,7 +153,7 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 🙏 Acknowledgments
 
-Built with ❤️ by worm shadow
+Built with ❤️ by worm shadow for He
 
 ---
 

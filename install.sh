@@ -1,30 +1,18 @@
 #!/bin/bash
 
-# ZPHISHING APEX v4.0 — Installation Script
+# ZPHISHING APEX v4.1 — Installation Script (FIXED)
 # Works on Kali Linux, Arch Linux, and all Linux distributions
 
 set -e
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║                                                              ║"
-echo "║   ███████╗██████╗ ██╗  ██╗██╗███████╗██╗  ██╗██╗███╗   ██╗ ██████╗  ║"
-echo "║   ╚══███╔╝██╔══██╗██║  ██║██║██╔════╝██║  ██║██║████╗  ██║██╔════╝  ║"
-echo "║     ███╔╝ ██████╔╝███████║██║███████╗███████║██║██╔██╗ ██║██║       ║"
-echo "║    ███╔╝  ██╔═══╝ ██╔══██║██║╚════██║██╔══██║██║██║╚██╗██║██║       ║"
-echo "║   ███████╗██║     ██║  ██║██║███████║██║  ██║██║██║ ╚████║╚██████╗  ║"
-echo "║   ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝  ║"
-echo "║                                                              ║"
-echo "║              A P E X   P R O T O C O L   v 4 . 0              ║"
-echo "║                                                              ║"
+echo "║   ZPHISHING APEX v4.1 — SECURE EDITION INSTALLER            ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 
 # Check if running as root
@@ -37,73 +25,51 @@ fi
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     OS=$NAME
-    VER=$VERSION_ID
 else
     echo -e "${RED}[!] Cannot detect OS${NC}"
     exit 1
 fi
 
-echo -e "${CYAN}[*] Detected OS: $OS $VER${NC}"
+echo -e "${CYAN}[*] Detected OS: $OS${NC}"
 
 # Update system
-echo -e "${YELLOW}[*] Updating system packages...${NC}"
+echo -e "${YELLOW}[*] Updating system...${NC}"
 if [[ "$OS" == *"Kali"* ]] || [[ "$OS" == *"Debian"* ]] || [[ "$OS" == *"Ubuntu"* ]]; then
     apt-get update -y
-    apt-get upgrade -y
 elif [[ "$OS" == *"Arch"* ]]; then
     pacman -Syu --noconfirm
-elif [[ "$OS" == *"Fedora"* ]]; then
-    dnf update -y
-elif [[ "$OS" == *"CentOS"* ]] || [[ "$OS" == *"Red Hat"* ]]; then
-    yum update -y
-else
-    echo -e "${YELLOW}[!] Unknown OS, skipping system update${NC}"
 fi
 
 # Install dependencies
 echo -e "${YELLOW}[*] Installing dependencies...${NC}"
 if [[ "$OS" == *"Kali"* ]] || [[ "$OS" == *"Debian"* ]] || [[ "$OS" == *"Ubuntu"* ]]; then
-    apt-get install -y python3 python3-pip python3-venv python3-dev git curl wget \
+    apt-get install -y python3 python3-pip python3-venv git curl wget \
         build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev \
-        libjpeg-dev zlib1g-dev libpng-dev libtesseract-dev \
-        tesseract-ocr ffmpeg libsm6 libxext6 libxrender-dev \
-        libgl1-mesa-glx libglib2.0-0 chromium-browser \
-        nginx certbot python3-certbot-nginx docker.io docker-compose \
-        postgresql postgresql-contrib redis-server \
-        tor proxychains4 openvpn wireguard-tools
+        libjpeg-dev zlib1g-dev libpng-dev tesseract-ocr ffmpeg \
+        libsm6 libxext6 libxrender-dev libgl1-mesa-glx libglib2.0-0 \
+        chromium-browser nginx docker.io docker-compose \
+        postgresql postgresql-contrib redis-server
 elif [[ "$OS" == *"Arch"* ]]; then
     pacman -S --noconfirm python python-pip python-virtualenv git curl wget \
-        base-devel openssl libffi libxml2 libxslt \
-        libjpeg-turbo zlib libpng tesseract \
-        tesseract-data-eng ffmpeg libsm libxext libxrender \
-        mesa glib2 chromium nginx certbot certbot-nginx docker docker-compose \
-        postgresql redis tor proxychains-ng openvpn wireguard-tools
-elif [[ "$OS" == *"Fedora"* ]]; then
-    dnf install -y python3 python3-pip python3-virtualenv git curl wget \
-        gcc gcc-c++ openssl-devel libffi-devel libxml2-devel libxslt-devel \
-        libjpeg-turbo-devel zlib-devel libpng-devel tesseract-devel \
-        tesseract ffmpeg libSM libXext libXrender \
-        mesa-libGL glib2 chromium nginx certbot python3-certbot-nginx docker docker-compose \
-        postgresql postgresql-server redis tor proxychains-ng openvpn wireguard-tools
+        base-devel openssl libffi libxml2 libxslt libjpeg-turbo zlib \
+        libpng tesseract tesseract-data-eng ffmpeg libsm libxext \
+        libxrender mesa glib2 chromium nginx docker docker-compose \
+        postgresql redis
 fi
+
+# Create virtual environment (FIXED: don't install globally)
+echo -e "${YELLOW}[*] Creating virtual environment...${NC}"
+python3 -m venv venv
+source venv/bin/activate
 
 # Install Python packages
 echo -e "${YELLOW}[*] Installing Python packages...${NC}"
-pip3 install --upgrade pip
-pip3 install -r requirements.txt
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # Install Playwright browsers
 echo -e "${YELLOW}[*] Installing Playwright browsers...${NC}"
 playwright install chromium
-playwright install firefox
-
-# Download NLTK data
-echo -e "${YELLOW}[*] Downloading NLTK data...${NC}"
-python3 -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger'); nltk.download('wordnet'); nltk.download('vader_lexicon')"
-
-# Download spaCy model
-echo -e "${YELLOW}[*] Downloading spaCy model...${NC}"
-python3 -m spacy download en_core_web_sm
 
 # Setup database
 echo -e "${YELLOW}[*] Setting up database...${NC}"
@@ -125,7 +91,7 @@ elif [[ "$OS" == *"Arch"* ]]; then
     systemctl start redis
 fi
 
-# Create necessary directories
+# Create directories
 echo -e "${YELLOW}[*] Creating directories...${NC}"
 mkdir -p templates/{social,corporate,custom,ai_generated}
 mkdir -p payloads/{credential_stealer,session_hijacker,mfa_bypass,custom}
@@ -135,51 +101,65 @@ mkdir -p api/{rest_api,websocket,graphql}
 mkdir -p cli/{interactive,commands}
 mkdir -p web/{dashboard,operator_panel,victim_tracker}
 mkdir -p utils/{logger,config_manager,crypto_utils,helpers}
-mkdir -p docs
+mkdir -p docs logs data
 
 # Set permissions
 chmod +x zphishing.py
 chmod +x install.sh
 
-# Create .env file
-echo -e "${YELLOW}[*] Creating environment configuration...${NC}"
-cat > .env << 'EOF'
+# FIXED: Generate real secrets
+echo -e "${YELLOW}[*] Generating secrets...${NC}"
+SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET=$(openssl rand -hex 32)
+ENCRYPTION_KEY=$(openssl rand -base64 32)
+
+# FIXED: Create .env with REAL generated secrets
+echo -e "${YELLOW}[*] Creating .env file...${NC}"
+cat > .env << EOF
 # ZPHISHING APEX Configuration
+# Generated on $(date)
+
 FLASK_APP=zphishing.py
 FLASK_ENV=production
-SECRET_KEY=$(openssl rand -hex 32)
+SECRET_KEY=${SECRET_KEY}
 DATABASE_URL=postgresql://zphishing:zphishing@localhost/zphishing_db
 REDIS_URL=redis://localhost:6379/0
-JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET_KEY=${JWT_SECRET}
+ENCRYPTION_KEY=${ENCRYPTION_KEY}
 
-# AI API Keys (optional)
-OPENAI_API_KEY=your-openai-api-key-here
-ANTHROPIC_API_KEY=your-anthropic-api-key-here
-REPLICATE_API_TOKEN=your-replicate-api-token-here
+# AI API Keys (fill these in if you have them)
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+REPLICATE_API_TOKEN=
+
+# Blockchain (optional)
+ETH_RPC=
+POLYGON_RPC=
+BSC_RPC=
 
 # Cloud Provider Keys (optional)
-AWS_ACCESS_KEY_ID=your-aws-access-key
-AWS_SECRET_ACCESS_KEY=your-aws-secret-key
-DIGITALOCEAN_TOKEN=your-do-token
-GOOGLE_APPLICATION_CREDENTIALS=path-to-gcp-credentials
-AZURE_SUBSCRIPTION_ID=your-azure-subscription
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+DIGITALOCEAN_TOKEN=
+GOOGLE_APPLICATION_CREDENTIALS=
+AZURE_SUBSCRIPTION_ID=
 
 # Communication Keys (optional)
-TWILIO_ACCOUNT_SID=your-twilio-sid
-TWILIO_AUTH_TOKEN=your-twilio-token
-VONAGE_API_KEY=your-vonage-key
-VONAGE_API_SECRET=your-vonage-secret
-SLACK_BOT_TOKEN=your-slack-token
-DISCORD_WEBHOOK_URL=your-discord-webhook
-TELEGRAM_BOT_TOKEN=your-telegram-token
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+SLACK_BOT_TOKEN=
+DISCORD_WEBHOOK_URL=
+TELEGRAM_BOT_TOKEN=
 
 # Security
-ENCRYPTION_KEY=$(openssl rand -base64 32)
 TOR_SOCKS_PROXY=socks5://127.0.0.1:9050
 EOF
 
 echo -e "${GREEN}[+] Installation complete!${NC}"
-echo -e "${CYAN}[*] To start ZPHISHING APEX, run:${NC}"
-echo -e "${YELLOW}    python3 zphishing.py${NC}"
+echo -e "${CYAN}[*] To start ZPHISHING APEX:${NC}"
+echo -e "${YELLOW}    source venv/bin/activate${NC}"
+echo -e "${YELLOW}    python3 zphishing.py init-db${NC}"
+echo -e "${YELLOW}    python3 zphishing.py create-admin${NC}"
+echo -e "${YELLOW}    python3 zphishing.py serve${NC}"
 echo ""
 echo -e "${PURPLE}[!] For educational and authorized security testing only${NC}"
